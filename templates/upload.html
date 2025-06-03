@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Email Spoofing Detection</h2>
+    <form id="uploadForm">
+        <input type="file" name="file" id="fileInput" accept=".eml" required><br>
+        <button type="submit">Upload & Detect</button>
+    </form>
+    <pre id="result"></pre>
+</div>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (!file || file.name.split('.').pop().toLowerCase() !== 'eml') {
+            alert('Please select a valid .eml file.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+    });
+</script>
+{% endblock %}
